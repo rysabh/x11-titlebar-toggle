@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+TOOL_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# shellcheck source=/dev/null
+source "$TOOL_ROOT/lib/common.sh"
+# shellcheck source=/dev/null
+source "$TOOL_ROOT/lib/cli.sh"
+# shellcheck source=/dev/null
+source "$TOOL_ROOT/lib/profiles.sh"
+# shellcheck source=/dev/null
+source "$TOOL_ROOT/lib/windows.sh"
+# shellcheck source=/dev/null
+source "$TOOL_ROOT/lib/state.sh"
+# shellcheck source=/dev/null
+source "$TOOL_ROOT/lib/layout.sh"
+
+main() {
+  ensure_x11_session
+
+  parse_cli "$@"
+
+  if [[ "$COMMAND" == "list-profiles" ]]; then
+    list_profiles
+    return 0
+  fi
+
+  if [[ -n "$PROFILE_NAME" ]]; then
+    load_profile "$PROFILE_NAME"
+  else
+    reset_profile_settings
+  fi
+
+  apply_profile_defaults
+  validate_cli_selection
+
+  if [[ "$COMMAND" == "list-windows" ]]; then
+    print_window_list
+    return 0
+  fi
+
+  TARGET_WINDOW_ID="$(resolve_target_window)"
+
+  case "$COMMAND" in
+    inspect)
+      print_window_metadata "$TARGET_WINDOW_ID"
+      ;;
+    enter)
+      ensure_window_state_saved "$TARGET_WINDOW_ID"
+      apply_borderless_layout "$TARGET_WINDOW_ID" "$EFFECTIVE_TOP" "$EFFECTIVE_BOTTOM" "$EFFECTIVE_LEFT" "$EFFECTIVE_RIGHT"
+      ;;
+    exit)
+      restore_window_layout "$TARGET_WINDOW_ID"
+      ;;
+    toggle)
+      if window_state_exists "$TARGET_WINDOW_ID"; then
+        restore_window_layout "$TARGET_WINDOW_ID"
+      else
+        ensure_window_state_saved "$TARGET_WINDOW_ID"
+        apply_borderless_layout "$TARGET_WINDOW_ID" "$EFFECTIVE_TOP" "$EFFECTIVE_BOTTOM" "$EFFECTIVE_LEFT" "$EFFECTIVE_RIGHT"
+      fi
+      ;;
+    *)
+      die "Unsupported command: $COMMAND"
+      ;;
+  esac
+}
+
+main "$@"
