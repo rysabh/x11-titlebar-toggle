@@ -38,7 +38,7 @@ Optional convenience step:
 ln -s ~/Applications/linux-tools/x11-titlebar-toggle/x11-titlebar-toggle ~/.local/bin/x11-titlebar-toggle
 ```
 
-That symlink lets you run `x11-titlebar-toggle` from anywhere without typing the full path.
+That symlink lets you run `x11-titlebar-toggle` from anywhere without typing the full path. The launcher resolves symlinks to the real tool directory, so this convenience step is safe.
 
 This tool is an X11-only window chrome controller. It removes the title bar and frame from a chosen window, resizes that window to the current monitor with optional margins, and can later restore the previous state.
 

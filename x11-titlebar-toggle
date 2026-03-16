@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-TOOL_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+TOOL_ROOT="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
 
 # shellcheck source=/dev/null
 source "$TOOL_ROOT/lib/common.sh"
