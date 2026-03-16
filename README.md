@@ -1,5 +1,45 @@
 # x11-titlebar-toggle
 
+## Install on another similar PC
+
+This tool is not a single standalone script. The main launcher loads files from `lib/` and `profiles/`, so on another machine you must clone or copy the entire `x11-titlebar-toggle/` folder, not just the `x11-titlebar-toggle` file.
+
+If the other machine is a similar Ubuntu system and you want the shortest working install path, do this:
+
+```bash
+mkdir -p ~/Applications/linux-tools
+git clone <your-repo-url> ~/Applications/linux-tools/x11-titlebar-toggle
+cd ~/Applications/linux-tools/x11-titlebar-toggle
+sudo apt update
+sudo apt install wmctrl xdotool x11-utils x11-xserver-utils
+chmod +x ./x11-titlebar-toggle
+./x11-titlebar-toggle list-profiles
+```
+
+What each step does:
+
+- `mkdir -p ~/Applications/linux-tools` creates the parent directory structure expected by the examples in this README.
+- `git clone ... ~/Applications/linux-tools/x11-titlebar-toggle` copies the whole tool, including its modules and profile files.
+- `sudo apt install ...` installs the runtime dependencies that the scripts call directly: `wmctrl`, `xdotool`, `xprop`, `xrandr`, and `xwininfo`.
+- `chmod +x ./x11-titlebar-toggle` makes the entry script executable after cloning.
+- `./x11-titlebar-toggle list-profiles` is the quickest smoke test. If it prints the bundled profiles, the install is basically correct.
+
+Before you use it, confirm that the desktop session is X11:
+
+```bash
+echo "$XDG_SESSION_TYPE"
+```
+
+This should print `x11`. If it prints `wayland`, this tool is the wrong fit because it depends on X11 window decoration hints and X11 window management tools.
+
+Optional convenience step:
+
+```bash
+ln -s ~/Applications/linux-tools/x11-titlebar-toggle/x11-titlebar-toggle ~/.local/bin/x11-titlebar-toggle
+```
+
+That symlink lets you run `x11-titlebar-toggle` from anywhere without typing the full path.
+
 This tool is an X11-only window chrome controller. It removes the title bar and frame from a chosen window, resizes that window to the current monitor with optional margins, and can later restore the previous state.
 
 The code is split into small modules so each concern stays readable:
