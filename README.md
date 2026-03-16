@@ -8,7 +8,7 @@ If the other machine is a similar Ubuntu system and you want the shortest workin
 
 ```bash
 mkdir -p ~/Applications/linux-tools
-git clone <your-repo-url> ~/Applications/linux-tools/x11-titlebar-toggle
+git clone git@github.com:rysabh/x11-titlebar-toggle.git ~/Applications/linux-tools/x11-titlebar-toggle
 cd ~/Applications/linux-tools/x11-titlebar-toggle
 sudo apt update
 sudo apt install wmctrl xdotool x11-utils x11-xserver-utils
